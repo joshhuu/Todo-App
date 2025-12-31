@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="A modern, feature-rich todo list application">
+    <title>TaskFlow - Modern Todo App</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body class="light-mode">
+    <div id="toast" class="toast" role="alert" aria-live="polite"></div>
+
+    <div class="container">
+        <header class="header">
+            <div class="header-content">
+                <h1 class="app-title">
+                    <span class="icon">✓</span>
+                    TaskFlow
+                </h1>
+                <button id="themeToggle" class="theme-toggle" aria-label="Toggle theme">
+                    <span class="theme-icon">🌙</span>
+                </button>
+            </div>
+        </header>
+
+        <section class="stats-section" aria-label="Task statistics">
+            <div class="stat-card">
+                <div class="stat-value" id="totalCount">0</div>
+                <div class="stat-label">Total</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" id="activeCount">0</div>
+                <div class="stat-label">Active</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" id="completedCount">0</div>
+                <div class="stat-label">Completed</div>
+            </div>
+        </section>
+
+        <section class="add-task-section">
+            <form id="taskForm" class="task-form">
+                <div class="form-row">
+                    <input 
+                        type="text" 
+                        id="taskInput" 
+                        class="task-input" 
+                        placeholder="What needs to be done?"
+                        aria-label="Task description"
+                        autocomplete="off"
+                        required
+                    >
+                    <button type="submit" class="btn btn-primary" aria-label="Add task">
+                        <span class="btn-text">Add Task</span>
+                        <span class="btn-icon">+</span>
+                    </button>
+                </div>
+                
+                <div class="form-row form-options">
+                    <div class="form-group">
+                        <label for="categorySelect">
+                            <span class="label-icon">🏷️</span>
+                            Category
+                        </label>
+                        <select id="categorySelect" class="form-select" aria-label="Select category">
+                            <option value="general">General</option>
+                            <option value="work">Work</option>
+                            <option value="personal">Personal</option>
+                            <option value="shopping">Shopping</option>
+                            <option value="health">Health</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="prioritySelect">
+                            <span class="label-icon">⚡</span>
+                            Priority
+                        </label>
+                        <select id="prioritySelect" class="form-select" aria-label="Select priority">
+                            <option value="low">Low</option>
+                            <option value="medium">Medium</option>
+                            <option value="high">High</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="dueDateInput">
+                            <span class="label-icon">📅</span>
+                            Due Date
+                        </label>
+                        <input 
+                            type="date" 
+                            id="dueDateInput" 
+                            class="form-input"
+                            aria-label="Select due date"
+                        >
+                    </div>
+                </div>
+            </form>
+        </section>
+
+        <section class="controls-section">
+            <div class="search-container">
+                <input 
+                    type="search" 
+                    id="searchInput" 
+                    class="search-input" 
+                    placeholder="Search tasks..."
+                    aria-label="Search tasks"
+                    autocomplete="off"
+                >
+                <span class="search-icon">🔍</span>
+            </div>
+
+            <div class="filters-container">
+                <div class="filter-group">
+                    <label class="filter-label">Filter:</label>
+                    <div class="btn-group" role="group" aria-label="Filter tasks">
+                        <button class="btn btn-filter active" data-filter="all">All</button>
+                        <button class="btn btn-filter" data-filter="active">Active</button>
+                        <button class="btn btn-filter" data-filter="completed">Completed</button>
+                        <button class="btn btn-filter" data-filter="low">Low</button>
+                        <button class="btn btn-filter" data-filter="medium">Medium</button>
+                        <button class="btn btn-filter" data-filter="high">High</button>
+                    </div>
+                </div>
+
+                <div class="filter-group">
+                    <label class="filter-label">Sort:</label>
+                    <div class="btn-group" role="group" aria-label="Sort tasks">
+                        <button class="btn btn-filter active" data-sort="date">Date</button>
+                        <button class="btn btn-filter" data-sort="priority">Priority</button>
+                    </div>
+                </div>
+            </div>
+
+            <button id="clearCompleted" class="btn btn-secondary">
+                Clear Completed
+            </button>
+        </section>
+
+        <section class="tasks-section" aria-label="Task list">
+            <div id="taskList" class="task-list"></div>
+            
+            <div id="emptyState" class="empty-state">
+                <div class="empty-icon">📝</div>
+                <h2 class="empty-title">No tasks yet</h2>
+                <p class="empty-text">Add your first task to get started!</p>
+            </div>
+        </section>
+    </div>
+
+    <div id="editModal" class="modal" role="dialog" aria-labelledby="editModalTitle" aria-hidden="true">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="editModalTitle">Edit Task</h2>
+                <button class="modal-close" aria-label="Close modal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="editTaskForm">
+                    <div class="form-group">
+                        <label for="editTaskInput">Task</label>
+                        <input 
+                            type="text" 
+                            id="editTaskInput" 
+                            class="form-input"
+                            required
+                        >
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="editCategorySelect">Category</label>
+                        <select id="editCategorySelect" class="form-select">
+                            <option value="general">General</option>
+                            <option value="work">Work</option>
+                            <option value="personal">Personal</option>
+                            <option value="shopping">Shopping</option>
+                            <option value="health">Health</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="editPrioritySelect">Priority</label>
+                        <select id="editPrioritySelect" class="form-select">
+                            <option value="low">Low</option>
+                            <option value="medium">Medium</option>
+                            <option value="high">High</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="editDueDateInput">Due Date</label>
+                        <input 
+                            type="date" 
+                            id="editDueDateInput" 
+                            class="form-input"
+                        >
+                    </div>
+
+                    <div class="modal-actions">
+                        <button type="button" class="btn btn-secondary modal-cancel">Cancel</button>
+                        <button type="submit" class="btn btn-primary">Save Changes</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
